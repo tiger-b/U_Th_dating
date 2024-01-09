@@ -1,0 +1,673 @@
+%% ---------------------- MIT_readRawSummaryData.m --------------------- %%
+% DESCRIPTION
+%   Reads .csv files inputted by the user and converts the data into
+%   structures for use later on in the program. TEMPORARY SOLUTION
+%
+% CONSTANTS
+%   CONST:      struct of constants used for analysis (e.g., decay
+%                  constants, spike U/Th ratios)
+% 
+% DEPENDENCIES
+%   MIT_Th_tail_corr.m      :   Th tail correction
+%   MIT_U_tail_corr.m       :   Part 1 of U tail correction
+%   MIT_U_tail_corr_beta.m  :   Part 2 of U tail correction
+%   MIT_spike_corr.m        :   Spike correction
+%   MIT_Age_calc.m          :   Final age calculation
+% ----------------------------------------------------------------------- %
+% AUTHORS: Christine Y Chen [CYC], David McGee [DM]
+% Created:      04/30/15
+% Last updated: 09/04/15
+%% ---------------------- REVISION HISTORY ------------------------------ %
+% 01/09/24    [BHT]     Updated code that creates default analysis numbers
+% 09/04/15    [CYC]     Removed code that deleted the filenames of the raw
+%                       data files.
+% 09/02/15    [CYC]     Added ability to input volume of U and Th dissolved
+%                       fractions and start date of chemistry
+% 08/13/15    [CYC]     Changes reflected due to the new raw summary file 
+%                       for U-tail having fewer columns.
+% 06/12/15    [CYC]     Converted the script into a function that takes as
+%                       input the filenames of various csv files.
+% 04/30/15    [CYC]     Created by CYC. Based on Excel reduction sheet from
+%                       Dec 2014.
+%% ------------------------- Read in sample info ----------------------- %%
+numCols  = 20;        % Total number of columns in file; hard-coded
+
+% Open the sample info file for reading only
+fid = fopen(filename_sample_info, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid,'%s','delimiter','\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;   
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s',[1, numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the data, spike used, sample wt, spike wt,
+% and the analysis numbers
+samp_name        = [];                     % Sample name
+samp_spkType     = [];                     % Spike used (arag or calc)
+samp_pwderWt     = NaN(numberOfLines, 1);  % Weight of powder used
+samp_spkWt       = NaN(numberOfLines, 1);  % Spike weight
+samp_U_vol       = NaN(numberOfLines, 1);  % mL of U fraction
+samp_Th_vol      = NaN(numberOfLines, 1);  % mL of Th fraction
+dateOfChem       = [];                     % Date of chemistry 
+samp_U_num       = NaN(numberOfLines, 1);  % U sample analysis #
+samp_Th_num      = NaN(numberOfLines, 1);  % Th sample analysis #
+samp_U_tail_num  = NaN(numberOfLines, 1);  % U sample tail analysis #
+std1_U_num       = NaN(numberOfLines, 1);  % U std1 analysis #
+std1_U_tail_num  = NaN(numberOfLines, 1);  % U std1 tail analysis #
+std2_U_num       = NaN(numberOfLines, 1);  % U std2 analysis #
+std2_U_tail_num  = NaN(numberOfLines, 1);  % U std2 tail analysis #
+std1_Th_num      = NaN(numberOfLines, 1);  % Th std1 analysis #
+std2_Th_num      = NaN(numberOfLines, 1);  % Th std2 analysis #
+std_U_conc       = NaN(numberOfLines, 1);  % Concentration of Th standard
+std_Th_conc      = NaN(numberOfLines, 1);  % Concentration of U standard
+userConstants    = NaN(5, 1);              % User inputted constant values
+rawData_filename = [];                     % Raw data filenames
+
+% Loop through all lines and extract sample info data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    name_cell             = textscan(fid,    '%s'   , 1, 'Delimiter', ',');
+    spkType_cell          = textscan(fid,    '%s'   , 1, 'Delimiter', ',');
+    pwderWt_cell          = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    spkWt_cell            = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    U_vol_cell            = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    Th_vol_cell           = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    dateOfChem_cell       = textscan(fid,    '%s'   , 1, 'Delimiter', ',');
+    samp_U_num_cell       = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    samp_Th_num_cell      = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    samp_U_tail_num_cell  = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std1_U_num_cell       = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std1_U_tail_num_cell  = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std2_U_num_cell       = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std2_U_tail_num_cell  = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std1_Th_num_cell      = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std2_Th_num_cell      = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std_U_conc_cell       = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    std_Th_conc_cell      = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+    
+    if i <= 5         % For reading the filenames of the raw summary data
+        junk                  = textscan(fid,    '%s'   , 1, 'Delimiter', ','); clear junk; %#ok<NASGU>
+        rawData_filename_cell = textscan(fid,    '%s'   , 1, 'Delimiter', ',');
+        rawData_filename      = char(rawData_filename, rawData_filename_cell{1,1}{1,1}); % Extract file name from cell
+    elseif i <= 10    % Read the values of constants
+        junk                  = textscan(fid,    '%s'   , 1, 'Delimiter', ','); clear junk; %#ok<NASGU>
+        userConstants_cell    = textscan(fid,    '%f'   , 1, 'Delimiter', ',');
+        userConstants(i-5)    = cell2mat(userConstants_cell);
+    else
+        junk                  = textscan(fid,    '%d'   , 1, 'Delimiter', ','); clear junk; %#ok<NASGU>
+        junk                  = textscan(fid,    '%d'   , 1, 'Delimiter', ','); clear junk; %#ok<NASGU>
+    end
+    
+    % Only read if there are samples
+    if ~isempty(name_cell)
+        % Convert data into desired variable type
+        samp_name         = char(samp_name   , name_cell   {1,1}{1,1});  % Extract name from cell
+        samp_spkType      = char(samp_spkType, spkType_cell{1,1}{1,1});  % Extract spike type from cell
+        samp_pwderWt(i)   = cell2mat(pwderWt_cell);                      % Convert to numerical
+        samp_spkWt(i)     = cell2mat(spkWt_cell);                        % Convert to numerical
+        samp_U_vol(i)     = cell2mat(U_vol_cell);                        % Convert to numerical
+        samp_Th_vol(i)    = cell2mat(Th_vol_cell);                       % Convert to numerical
+        dateOfChem        = char(dateOfChem, dateOfChem_cell{1,1}{1,1}); % Extract file name from cell
+        std_U_conc(i)     = cell2mat(std_U_conc_cell);                   % Convert to numerical
+        std_Th_conc(i)    = cell2mat(std_Th_conc_cell);                  % Convert to numerical
+        
+        % Assign DEFAULT analysis numbers to U tails/stds and Th stds
+        samp_U_num(i)      = cell2mat(samp_U_num_cell);
+        samp_Th_num(i)     = cell2mat(samp_Th_num_cell);
+        samp_U_tail_num(i) = samp_U_num(i) + 4;
+        std1_U_num(i)      = samp_U_num(i) - 3;
+        std1_U_tail_num(i) = samp_U_num(i) - 2;
+        std2_U_num(i)      = samp_U_num(i) + 3;
+        std2_U_tail_num(i) = samp_U_num(i) + 4;
+        std1_Th_num(i)     = samp_Th_num(i) - 1;
+        std2_Th_num(i)     = samp_Th_num(i) + 1;
+        
+        % If the user has defined values for analysis numbers for the
+        % U tail/stds or Th stds, then set those values
+        if ~isnan(cell2mat(samp_U_tail_num_cell))
+            samp_U_tail_num(i) = cell2mat(samp_U_tail_num_cell);
+        end
+        if ~isnan(cell2mat(std1_U_num_cell))
+            std1_U_num(i)      = cell2mat(std1_U_num_cell);
+        end
+        if ~isnan(cell2mat(std1_U_tail_num_cell))
+            std1_U_tail_num(i) = cell2mat(std1_U_tail_num_cell);
+        end
+        if ~isnan(cell2mat(std2_U_num_cell))
+            std2_U_num(i)      = cell2mat(std2_U_num_cell);
+        end
+        if ~isnan(cell2mat(std2_U_tail_num_cell))
+            std2_U_tail_num(i) = cell2mat(std2_U_tail_num_cell);
+        end
+        if ~isnan(cell2mat(std1_Th_num_cell))
+            std1_Th_num(i)     = cell2mat(std1_Th_num_cell);
+        end
+        if ~isnan(cell2mat(std2_Th_num_cell))
+            std2_Th_num(i)     = cell2mat(std2_Th_num_cell);
+        end
+    end
+end
+fclose(fid);  % Close the file
+
+% Get rid of any NaN values
+samp_pwderWt     = samp_pwderWt(~isnan(samp_pwderWt));       % Weight of powder used
+samp_spkWt       = samp_spkWt(~isnan(samp_spkWt));           % Spike weight
+samp_U_num       = samp_U_num(~isnan(samp_U_num));           % U sample analysis #
+samp_Th_num      = samp_Th_num(~isnan(samp_Th_num));         % Th sample analysis #
+samp_U_vol       = samp_U_vol(~isnan(samp_U_vol));           % vol U sample
+samp_Th_vol      = samp_Th_vol(~isnan(samp_Th_vol));         % vol Th sample
+samp_U_tail_num  = samp_U_tail_num(~isnan(samp_U_tail_num)); % U sample tail analysis #
+std1_U_num       = std1_U_num(~isnan(std1_U_num));           % U std1 analysis #
+std1_U_tail_num  = std1_U_tail_num(~isnan(std1_U_tail_num)); % U std1 tail analysis #
+std2_U_num       = std2_U_num(~isnan(std2_U_num));           % U std2 analysis #
+std2_U_tail_num  = std2_U_tail_num(~isnan(std2_U_tail_num)); % U std2 tail analysis #
+std1_Th_num      = std1_Th_num(~isnan(std1_Th_num));         % Th std1 analysis #
+std2_Th_num      = std2_Th_num(~isnan(std2_Th_num));         % Th std2 analysis #
+std_U_conc       = std_U_conc(~isnan(std_U_conc));           % U std conc
+std_Th_conc      = std_Th_conc(~isnan(std_Th_conc));         % Th std conc
+
+% Convert name, date, and filenames into character arrays
+samp_name    = cellstr(samp_name);
+samp_name    = samp_name(2:end);      % Remove first empty cell
+samp_name    = samp_name(~cellfun('isempty', samp_name)); % Remove empty cells
+samp_spkType = cellstr(samp_spkType); 
+samp_spkType = samp_spkType(2:end);   % Remove first empty cell
+samp_spkType = samp_spkType(~cellfun('isempty', samp_spkType)); % Remove empty cells
+
+rawData_filename = cellstr(rawData_filename); 
+rawData_filename = rawData_filename(2:end);    % Remove first empty cell
+dateOfChem       = cellstr(dateOfChem); 
+dateOfChem       = dateOfChem(2:end);          % Remove first empty cell
+
+% Set user-defined constant values
+tailTh230Th232        = userConstants(1);        % Tail correction value
+U239238               = userConstants(2);        % U239/U238 ratio
+Th230Th232_ratio      = userConstants(3);        % Th230/Th232 ratio
+Th230Th232_uncer      = userConstants(4);        % Th230/Th232 uncertainty
+countspersecpervolt   = userConstants(5);        % Counts per second per Volt
+
+% Set filenames for raw summary data
+filename_U_samp      = rawData_filename(1);
+filename_U_samp      = filename_U_samp{1, 1};
+filename_Th_samp     = rawData_filename(2);
+filename_Th_samp     = filename_Th_samp{1, 1};
+filename_U_std       = rawData_filename(3);
+filename_U_std       = filename_U_std{1, 1};
+filename_U_tail      = rawData_filename(4);
+filename_U_tail      = filename_U_tail{1, 1};
+filename_Th_std      = rawData_filename(5);
+filename_Th_std      = filename_Th_std{1, 1};
+
+% First entry is the procedural blank; separate that from the rest
+blank_name        = cellstr(samp_name(1));     % First entry
+blank_spkType     = cellstr(samp_spkType(1));  % First entry
+blank_spkWt       = samp_spkWt(1);             % First entry
+blank_pwderWt     = samp_pwderWt(1);
+blank_U_vol       = samp_U_vol(1); 
+blank_Th_vol      = samp_Th_vol(1);
+blank_dateOfChem  = cellstr(dateOfChem(1));
+blank_std_U_conc   = std_U_conc(1);           % U std conc
+blank_std_Th_conc  = std_Th_conc(1);          % Th std conc
+
+% Remove blank data from rest of the Th data
+samp_name        = samp_name   (2:end);
+samp_spkType     = samp_spkType(2:end);
+samp_pwderWt     = samp_pwderWt(2:end);
+samp_spkWt       = samp_spkWt  (2:end);  
+samp_U_vol       = samp_U_vol  (2:end);
+samp_Th_vol      = samp_Th_vol (2:end);
+samp_dateOfChem  = dateOfChem  (2:end);
+samp_std_U_conc  = std_U_conc  (2:end);
+samp_std_Th_conc = std_Th_conc (2:end);
+
+% Find the total number of samples that are being reduced
+numSamp = length(samp_name) + 1;
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell fileNum_cell fid ans i numberOfLines numCols ...
+    spkType_cell pwderWt_cell spkWt_cell samp_U_num_cell samp_Th_num_cell ...
+    samp_U_tail_num_cell std1_U_num_cell std1_U_tail_num_cell std2_U_num_cell ...
+    std2_U_tail_num_cell std1_Th_num_cell std2_Th_num_cell U_vol_cell Th_vol_cell dateOfChem
+    
+%% ------------------------ Read in thorium data ----------------------- %%
+numCols  = 19;    % Total number of columns in file
+numColsD = 16;    % Number of columns of Th data
+
+% ----------------- First, read in thorium standards -------------------- %
+fid = fopen(filename_Th_std, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid,'%s','delimiter','\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;   
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s',[1, numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the all read-in Th standard data from text file
+allThstd_data     = NaN(numberOfLines, numColsD);  % U-Th data
+allThstd_name     = [];                            % Sample name
+allThstd_date     = [];                            % Date of analysis
+allThstd_analyNum = NaN(numberOfLines, 1);         % File number
+
+% Loop through all lines and extract all U-Th data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    data_cell        = textscan(fid, repmat('%f',[1, numColsD]), 1, 'Delimiter', ',');
+    name_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    date_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    analyNum_cell    = textscan(fid,        '%d'               , 1, 'Delimiter', ',');
+    
+    % Convert data into desired variable type  
+    allThstd_data(i, :)  = cell2mat(data_cell);                      % Convert to numerical 
+    allThstd_name        = char(allThstd_name, name_cell{1,1}{1,1}); % Extract name from cell
+    allThstd_date        = char(allThstd_date, date_cell{1,1}{1,1}); % Extract date from cell
+    allThstd_analyNum(i) = cell2mat(analyNum_cell);                  % Convert to numerical
+end
+fclose(fid); % Close the file
+
+% Convert name and date that Th standard 1 was run into a character array
+allThstd_name = cellstr(allThstd_name); 
+allThstd_name = allThstd_name(2:end);   % Remove first empty cell
+allThstd_date = cellstr(allThstd_date); 
+allThstd_date = allThstd_date(2:end);   % Remove first empty cell
+
+% Now, pair all Th standard data to the correct sample using analysis #
+Thstd1_data = NaN(numSamp, numColsD);   % Pre-allocate space for sample data
+Thstd2_data = NaN(numSamp, numColsD);
+Thstd1_name = cell(1, numSamp);         % Pre-allocate cell for name
+Thstd2_name = cell(1, numSamp);
+Thstd1_datetime = cell(1, numSamp);     % Pre-allocate cell for date of analysis
+Thstd2_datetime = cell(1, numSamp);
+for i = 1:numSamp
+    % Th standard 1
+    index1 = find(allThstd_analyNum == std1_Th_num(i));
+    if isempty(index1)
+        error(['Error. Cannot find data for Th standard #1 in text file, based on analysis number. ' ...
+               'Check to make sure your analysis number inputs for Th are correct.']);
+    end
+    Thstd1_data(i, :) = allThstd_data(index1, :); % Find standard data
+    Thstd1_datetime(i) = allThstd_date(index1);   % Find the date of analysis
+    Thstd1_name(i) = allThstd_name(index1);       % Find standard name
+    clear index1
+    
+    % Th standard 2
+    index2 = find(allThstd_analyNum == std2_Th_num(i));
+    if isempty(index2)
+        error(['Error. Cannot find data for Th standard #2 in text file, based on analysis number. ' ...
+               'Check to make sure your analysis number inputs for Th are correct.']);
+    end
+    Thstd2_data(i, :) = allThstd_data(index2, :); % Find standard data
+    Thstd2_datetime(i) = allThstd_date(index2);   % Find the date of analysis  
+    Thstd2_name(i) = allThstd_name(index2);       % Find standard name     
+    clear index2
+end
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell analyNum_cell fid ans i ...
+      numCols numColsD numberOfLines allThstd_analyNum allThstd_data allThstd_date ...
+      allThstd_name
+      
+%% ----------------- Next, read in thorium samples ----------------------- %
+numCols  = 19;    % Total number of columns in file
+numColsD = 16;    % Number of columns of Th data
+
+fid = fopen(filename_Th_samp, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid, '%s', 'delimiter', '\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s', [1,numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the all read-in Th sample data from text file
+allThsamp_data = NaN(numberOfLines, numColsD);   % Th data
+allThsamp_name = [];                             % Sample name
+allThsamp_date = [];                             % Date of analysis
+allThsamp_analyNum = NaN(numberOfLines, 1);      % Analysis number
+
+% Loop through all lines and extract all Th data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    data_cell        = textscan(fid, repmat('%f',[1, numColsD]), 1, 'Delimiter', ',');
+    name_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    date_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    analyNum_cell    = textscan(fid,        '%d'               , 1, 'Delimiter', ',');
+    
+    % Convert data into desired variable type (e.g., cell array to double array)
+    allThsamp_data(i, :)  = cell2mat(data_cell);                       % Convert to numerical 
+    allThsamp_name        = char(allThsamp_name, name_cell{1,1}{1,1}); % Extract name from cell
+    allThsamp_date        = char(allThsamp_date, date_cell{1,1}{1,1}); % Extract date from cell
+    allThsamp_analyNum(i) = cell2mat(analyNum_cell);                   % Convert to numerical
+end
+fclose(fid); % Close the file
+
+% Convert anaysis name and date of Th sample into a character array
+allThsamp_name = cellstr(allThsamp_name); 
+allThsamp_name = allThsamp_name(2:end);   % Remove first empty cell
+allThsamp_date = cellstr(allThsamp_date); 
+allThsamp_date = allThsamp_date(2:end);   % Remove first empty cell
+
+% Now, pair all Th sample data to the correct sample using analysis #
+Thsamp_data     = NaN(numSamp, numColsD); % Pre-allocate space for sample data
+Thsamp_name     = cell(1, numSamp);       % Pre-allocate cell for sample name
+Thsamp_datetime = cell(1, numSamp);       % Pre-allocate cell for date of analysis
+for i = 1:numSamp
+    index = find(allThsamp_analyNum == samp_Th_num(i));
+    if isempty(index)
+        error('Error. Cannot find data for Th sample in text file, based on analysis number.')
+    end
+    Thsamp_data(i, :)  = allThsamp_data(index, :);  % Get row of all Th data for each sample
+    Thsamp_datetime(i) = allThsamp_date(index);     % Find the date of analysis
+    Thsamp_name(i)     = allThsamp_name(index);     % Find analysis name
+    clear index
+end
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell analyNum_cell fid ans i numberOfLines numCols numColsD ...
+      analyNum_cell allThsamp_analyNum allThsamp_data allThsamp_date allThsamp_name
+
+%% ------------------------ Read in uranium data ----------------------- %%
+% ----------------- First, read in uranium standards -------------------- %
+numCols  = 17;    % Total number of columns in file
+numColsD = 14;    % Number of columns of U data
+
+fid = fopen(filename_U_std, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid,'%s','delimiter','\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;   
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s',[1,numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the all read-in U standard data from text file
+allUstd_data = NaN(numberOfLines, numColsD);   % U data
+allUstd_name = [];                             % Sample name
+allUstd_date = [];                             % Date of analysis
+allUstd_analyNum = NaN(numberOfLines, 1);      % File number
+
+% Loop through all lines and extract all U standard data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    data_cell        = textscan(fid, repmat('%f',[1, numColsD]), 1, 'Delimiter', ',');
+    name_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    date_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    analyNum_cell    = textscan(fid,        '%d'               , 1, 'Delimiter', ',');
+    
+    % Convert data into desired variable type  
+    allUstd_data(i, :) = cell2mat(data_cell);                  % Convert to numerical 
+    allUstd_name       = char(allUstd_name, name_cell{1,1}{1,1}); % Extract name from cell
+    allUstd_date       = char(allUstd_date, date_cell{1,1}{1,1}); % Extract date from cell
+    allUstd_analyNum(i) = cell2mat(analyNum_cell);               % Convert to numerical
+end
+fclose(fid); % Close the file
+
+% Convert analysis name and date of U standard into a character array
+allUstd_name = cellstr(allUstd_name); 
+allUstd_name = allUstd_name(2:end);   % Remove first empty cell
+allUstd_date = cellstr(allUstd_date); 
+allUstd_date = allUstd_date(2:end);   % Remove first empty cell
+
+% Now, pair all U standard data to the correct sample using analysis #
+Ustd1_data = NaN(numSamp, numColsD);   % Pre-allocate space for sample data
+Ustd2_data = NaN(numSamp, numColsD);
+Ustd1_datetime = cell(1, numSamp);       % Pre-allocate cell for date of analysis
+Ustd2_datetime = cell(1, numSamp);       % Pre-allocate cell for date of analysis
+Ustd1_name     = cell(1, numSamp);       % Pre-allocate cell for name
+Ustd2_name     = cell(1, numSamp);       % Pre-allocate cell for name
+for i = 1:numSamp
+    % U standard 1
+    index1 = find(allUstd_analyNum == std1_U_num(i));
+    if isempty(index1)
+        error('Error. Cannot find data for Th standard #1 in text file, based on analysis number.')
+    end
+    Ustd1_data(i, :)  = allUstd_data(index1, :);  % Find U standard 1 data
+    Ustd1_datetime(i) = allUstd_date(index1);     % Find the date of analysis
+    Ustd1_name(i)     = allUstd_name(index1);     % Find the analysis name
+    clear index1
+    
+    % U standard 2
+    index2 = find(allUstd_analyNum == std2_U_num(i));
+    if isempty(index2)
+        error('Error. Cannot find data for Th standard #2 in text file, based on analysis number.')
+    end
+    Ustd2_data(i, :) = allUstd_data(index2, :);   % Find U standard 2 data 
+    Ustd2_datetime(i) = allUstd_date(index2);     % Find the date of analysis
+    Ustd2_name(i)     = allUstd_name(index2);     % Find the analysis name
+    clear index2
+end 
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell analyNum_cell fid ans i allUstd_analyNum ...
+      allUstd_data allUstd_date allUstd_name
+
+%% ----------------- Next, read in uranium samples ----------------------- %
+fid = fopen(filename_U_samp, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid, '%s', 'delimiter', '\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;   
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s', [1,numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the data, sample name, date, and file number
+allUsamp_data = NaN(numberOfLines, numColsD);   % U data
+allUsamp_name = [];                             % Sample name
+allUsamp_date = [];                             % Date of analysis
+allUsamp_analyNum = NaN(numberOfLines, 1);       % File number
+% Loop through all lines and extract U data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    data_cell        = textscan(fid, repmat('%f',[1,numColsD]), 1, 'Delimiter', ',');
+    name_cell        = textscan(fid,        '%s'              , 1, 'Delimiter', ',');
+    date_cell        = textscan(fid,        '%s'              , 1, 'Delimiter', ',');
+    analyNum_cell     = textscan(fid,       '%d'              , 1, 'Delimiter', ',');
+    % Convert data into desired variable type
+    allUsamp_data(i, :)  = cell2mat(data_cell);                      % Convert to numerical 
+    allUsamp_name        = char(allUsamp_name, name_cell{1,1}{1,1}); % Extract name from cell
+    allUsamp_date        = char(allUsamp_date, date_cell{1,1}{1,1}); % Extract date from cell
+    allUsamp_analyNum(i) = cell2mat(analyNum_cell);                  % Convert to numerical
+end
+fclose(fid); % Close the file
+
+% Convert anaylsis name and date of U sample into a character array
+allUsamp_name = cellstr(allUsamp_name); 
+allUsamp_name = allUsamp_name(2:end);   % Remove first empty cell
+allUsamp_date = cellstr(allUsamp_date); 
+allUsamp_date = allUsamp_date(2:end);   % Remove first empty cell
+
+% Now, pair all U sample data to the correct sample using analysis #
+Usamp_data     = NaN(numSamp, numColsD);   % Pre-allocate space for sample data
+Usamp_datetime = cell(1, numSamp);         % Pre-allocate space for date of analysis
+Usamp_name     = cell(1, numSamp);         % Pre-allocate space for name
+for i = 1:numSamp
+    index = find(allUsamp_analyNum == samp_U_num(i));
+    if isempty(index)
+        error('Error. Cannot find data for U sample in text file, based on analysis number.')
+    end
+    Usamp_data(i, :)  = allUsamp_data(index, :);
+    Usamp_datetime(i) = allUsamp_date(index);     % Find the date of analysis
+    Usamp_name(i)     = allUsamp_name(index);     % Find the analysis name
+    clear index
+end
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell analyNum_cell fid ans i numberOfLines numCols numColsD ...
+      allUsamp_data allUsamp_name allUsamp_date allUsamp_analyNum
+
+%% ------ Next, read in uranium tail data of standards and samples ------ %
+numCols  = 15;
+numColsD = 12;
+fid = fopen(filename_U_tail, 'r');
+% Get the number of lines in the file.
+allText = textscan(fid, '%s', 'delimiter', '\n');
+% Number of lines of data is the total number of lines minus the header
+numberOfLines = length(allText{1}) - 1;   
+clear allText   % Don't need this anymore
+frewind(fid);   % Rewind to the beginning of the file
+% Read in the header of the file, and then get rid of it
+header = textscan(fid, repmat('%s', [1,numCols]), 1, 'Delimiter', ','); clear header  %#ok<NASGU>
+
+% Pre-allocate space for the data, sample name, date, and file number
+allUtail_data = NaN(numberOfLines, numColsD);   % U data
+allUtail_name = [];                             % Sample name
+allUtail_date = [];                             % Date of analysis
+allUtail_analyNum = NaN(numberOfLines, 1);      % File number
+% Loop through all lines and extract U-Th data
+for i = 1:numberOfLines
+    % Extract data from textfile into cell arrays
+    data_cell        = textscan(fid, repmat('%f',[1, numColsD]), 1, 'Delimiter', ',');
+    name_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    date_cell        = textscan(fid,        '%s'               , 1, 'Delimiter', ',');
+    analyNum_cell     = textscan(fid,       '%d'               , 1, 'Delimiter', ',');
+    % Convert data into desired variable type   
+    allUtail_data(i, :) = cell2mat(data_cell);                      % Convert to numerical 
+    allUtail_name       = char(allUtail_name, name_cell{1,1}{1,1}); % Extract name from cell
+    allUtail_date       = char(allUtail_date, date_cell{1,1}{1,1}); % Extract date from cell
+    allUtail_analyNum(i) = cell2mat(analyNum_cell);                 % Convert to numerical
+end
+fclose(fid); % Close the file
+
+% Convert anaylsis name and date of U tail into a character array
+allUtail_name = cellstr(allUtail_name); 
+allUtail_name = allUtail_name(2:end);   % Remove first empty cell
+allUtail_date = cellstr(allUtail_date); 
+allUtail_date = allUtail_date(2:end);   % Remove first empty cell
+
+% Now, pair all U tail data to the correct sample using analysis #
+Usamp_tail_data = NaN(numSamp, numColsD);  % Pre-allocate space for sample data
+Ustd1_tail_data = NaN(numSamp, numColsD);
+Ustd2_tail_data = NaN(numSamp, numColsD);
+Usamp_tail_datetime = cell(1, numSamp);    % Pre-allocate space for date of analysis
+Ustd1_tail_datetime = cell(1, numSamp);   
+Ustd2_tail_datetime = cell(1, numSamp);   
+Usamp_tail_name = cell(1, numSamp);        % Pre-allocate space for analysis name
+Ustd1_tail_name = cell(1, numSamp);   
+Ustd2_tail_name = cell(1, numSamp); 
+for i = 1:numSamp
+    % U sample tail
+    index = find(allUtail_analyNum == samp_U_tail_num(i));
+    if isempty(index)
+        error('Error. Cannot find data for Th standard #1 in text file, based on analysis number.')
+    end
+    Usamp_tail_data(i, :)  = allUtail_data(index, :);
+    Usamp_tail_datetime(i) = allUtail_date(index);   % Find analysis date
+    Usamp_tail_name(i)     = allUtail_name(index);   % Find analysis name
+    clear index
+    
+    % U standard 1 tail
+    index1 = find(allUtail_analyNum == std1_U_tail_num(i));
+    if isempty(index1)
+        error('Error. Cannot find data for Th standard #1 in text file, based on analysis number.')
+    end
+    Ustd1_tail_data(i, :)  = allUtail_data(index1, :);
+    Ustd1_tail_datetime(i) = allUtail_date(index1);   % Find analysis date
+    Ustd1_tail_name(i)     = allUtail_name(index1);   % Find analysis name
+    clear index1
+    
+    % U standard 2 tail 
+    index2 = find(allUtail_analyNum == std2_U_tail_num(i));
+    if isempty(index2)
+        error('Error. Cannot find data for Th standard #2 in text file, based on analysis number.')
+    end
+    Ustd2_tail_data(i, :) = allUtail_data(index2, :);
+    Ustd2_tail_datetime(i) = allUtail_date(index2);   % Find analysis date
+    Ustd2_tail_name(i)     = allUtail_name(index2);   % Find analysis name
+    clear index2
+end 
+
+% Clear workspace of unnecessary variables
+clear data_cell name_cell date_cell analyNum_cell fid ans i numberOfLines ...
+      numCols numColsD allUtail_data allUtail_name allUtail_date allUtail_analyNum 
+  
+%% ---------- Separate blank from all data and dates--------------------- %
+% Separate blank from data
+blank_Thsamp_data     = Thsamp_data    (1, :);
+blank_Thstd1_data     = Thstd1_data    (1, :);
+blank_Thstd2_data     = Thstd2_data    (1, :);
+blank_Usamp_data      = Usamp_data     (1, :);
+blank_Usamp_tail_data = Usamp_tail_data(1, :);
+blank_Ustd1_data      = Ustd1_data     (1, :);
+blank_Ustd1_tail_data = Ustd1_tail_data(1, :);
+blank_Ustd2_data      = Ustd2_data     (1, :);
+blank_Ustd2_tail_data = Ustd2_tail_data(1, :);
+
+% Separate blank from date and time
+blank_Thsamp_datetime     = Thsamp_datetime    (1);
+blank_Thstd1_datetime     = Thstd1_datetime    (1);
+blank_Thstd2_datetime     = Thstd2_datetime    (1);
+blank_Usamp_datetime      = Usamp_datetime     (1);
+blank_Usamp_tail_datetime = Usamp_tail_datetime(1);
+blank_Ustd1_datetime      = Ustd1_datetime     (1);
+blank_Ustd1_tail_datetime = Ustd1_tail_datetime(1);
+blank_Ustd2_datetime      = Ustd2_datetime     (1);
+blank_Ustd2_tail_datetime = Ustd2_tail_datetime(1);
+
+% Separate blank from names
+blank_Thsamp_name     = Thsamp_name    (1);
+blank_Thstd1_name     = Thstd1_name    (1);
+blank_Thstd2_name     = Thstd2_name    (1);
+blank_Usamp_name      = Usamp_name     (1);
+blank_Usamp_tail_name = Usamp_tail_name(1);
+blank_Ustd1_name      = Ustd1_name     (1);
+blank_Ustd1_tail_name = Ustd1_tail_name(1);
+blank_Ustd2_name      = Ustd2_name     (1);
+blank_Ustd2_tail_name = Ustd2_tail_name(1);
+
+% Separate blank from analysis numbers
+blank_Th_num         = samp_Th_num    (1);
+blank_Thstd1_num     = std1_Th_num    (1);
+blank_Thstd2_num     = std2_Th_num    (1);
+blank_U_num          = samp_U_num     (1);
+blank_U_tail_num     = samp_U_tail_num(1);
+blank_Ustd1_num      = std1_U_num     (1);
+blank_Ustd1_tail_num = std1_U_tail_num(1);
+blank_Ustd2_num      = std2_U_num     (1);
+blank_Ustd2_tail_num = std2_U_tail_num(1);
+
+% Remove blank from rest of the data, time, name, and analysis number
+Thsamp_data     = Thsamp_data    (2:end, :);
+Thstd1_data     = Thstd1_data    (2:end, :);
+Thstd2_data     = Thstd2_data    (2:end, :);
+Usamp_data      = Usamp_data     (2:end, :);
+Usamp_tail_data = Usamp_tail_data(2:end, :);
+Ustd1_data      = Ustd1_data     (2:end, :);
+Ustd1_tail_data = Ustd1_tail_data(2:end, :);
+Ustd2_data      = Ustd2_data     (2:end, :);
+Ustd2_tail_data = Ustd2_tail_data(2:end, :);
+% Thsamp_datetime      = Thsamp_datetime     (2:end);
+% Thstd1_datetime      = Thstd1_datetime     (2:end);
+% Thstd2_datetime      = Thstd2_datetime     (2:end);
+% Usamp_datetime       = Usamp_datetime      (2:end);
+% Usamp_tail_datetime  = Usamp_tail_datetime (2:end);
+% Ustd1_datetime       = Ustd1_datetime      (2:end);
+% Ustd1_tail_datetime  = Ustd1_tail_datetime (2:end);
+% Ustd2_datetime       = Ustd2_datetime      (2:end);
+% Ustd2_tail_datetime  = Ustd2_tail_datetime (2:end);
+% Thsamp_name      = Thsamp_name     (2:end);
+% Thstd1_name      = Thstd1_name     (2:end);
+% Thstd2_name      = Thstd2_name     (2:end);
+% Usamp_name       = Usamp_name      (2:end);
+% Usamp_tail_name  = Usamp_tail_name (2:end);
+% Ustd1_name       = Ustd1_name      (2:end);
+% Ustd1_tail_name  = Ustd1_tail_name (2:end);
+% Ustd2_name       = Ustd2_name      (2:end);
+% Ustd2_tail_name  = Ustd2_tail_name (2:end);
+% samp_Th_num      = samp_Th_num    (2:end);
+% std1_Th_num      = std1_Th_num    (2:end);
+% std2_Th_num      = std2_Th_num    (2:end);
+% samp_U_num       = samp_U_num     (2:end);
+% samp_U_tail_num  = samp_U_tail_num(2:end);
+% std1_U_num       = std1_U_num     (2:end);
+% std1_U_tail_num  = std1_U_tail_num(2:end);
+% std2_U_num       = std2_U_num     (2:end);
+% std2_U_tail_num  = std2_U_tail_num(2:end);
