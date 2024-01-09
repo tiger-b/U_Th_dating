@@ -1,0 +1,11 @@
+Sample Name,Spike used,Sample Wt (g),Spike Wt (g),U fraction vol (mL),Th fraction vol (mL),Date of chemistry,U samp #,Th samp #,U samp tail #,U std1 #,U std1 tail #,U std2 #,U std2 tail #,Th std 1 #,Th std 2 #,U std conc (pg/g),Th std conc (ng/g), ,Enter Names or Values Here
+TPB ,Aragonite,,0.01757,0.75,0.3,1/1/2021,55700,55773,,,,,,,,12.5,0.5,Filename for U samp,U samp_no tail_meas.csv
+AB12-4A,Aragonite,0.20527,0.06742,3,0.3,1/1/2021,55713,55777,,,,,,,,12.5,0.5,Filename for Th samp,Th samp_meas.csv
+AB12-4B,Aragonite,0.26012,0.07792,1,0.3,1/1/2021,55719,55781,,,,,,,,12.5,0.5,Filename for U standards,U std_no tail_meas.csv
+AB12-4C,Aragonite,0.20401,0.04927,1,0.3,1/1/2021,55725,55785,,,,,,,,12.5,0.5,Filename for U tail,U tail-237-236.5-234.5-233.5_meas.csv
+AB12-4D,Aragonite,0.2172,0.05849,1,0.3,1/1/2021,55731,55789,,,,,,,,12.5,0.5,Filename for Th standards,Th std_meas.csv
+AB12-4E,Aragonite,0.25148,0.08388,1,0.3,1/1/2021,55737,55793,,,,,,,,12.5,0.5,230Th/232Th Tail Correction,4.51E-07
+AB12-4F,Aragonite,0.23843,0.07249,1,0.3,1/1/2021,55743,55797,,,,,,,,12.5,0.5,U239/U238 ratio,2.16E-06
+AB12-4G,Aragonite,0.20765,0.05127,1,0.3,1/1/2021,55749,55801,,,,,,,,12.5,0.5,Detrital Th230/Th232 ratio,4.4
+AB12-4H,Aragonite,0.22052,0.04884,1,0.3,1/1/2021,55755,55805,,,,,,,,12.5,0.5,Detrital Th230/Th232 uncertainty ,2.2
+CC5A-1_NW_Set4,Aragonite,0.00337,0.0916,1,0.3,1/1/2021,55761,55809,,,,,,,,12.5,0.5,Counts Per Second Per Volt,62415093
