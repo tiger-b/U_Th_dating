@@ -1,0 +1,72 @@
+Date of reduction: 13-Feb-2024 22:14:52																		
+Version of script: 1.1.090915 																		
+																		
+FILENAMES OF RAW DATA FILES																		
+User input of sample data	mad_input_2.csv																	
+U samp file	U samp_no tail_meas.csv																	
+Th samp file	Th samp_meas.csv																	
+U std file	U std_no tail_meas.csv																	
+U tail file	U tail-237-236.5-234.5-233.5_meas.csv																	
+Th std file	Th std_meas.csv																	
+																		
+USER INPUT OF VALUES OF CONSTANTS																		
+230Th/232Th Tail Correction	4.51E-07																	
+U239/U238 ratio	2.16E-06																	
+Detrital Th230/Th232 ratio	4.40E+00																	
+Detrital Th230/Th232 uncertainty 	2.20E+00																	
+																		
+USER INPUT OF SAMPLE DATA																		
+Sample Name	Spike Type	Powder Weight (g)	Spike Weight (g)	U frac vol (mL)	Th frac vol (mL)	Date of Chem	U std conc	Th std conc										
+Procedural blank	Calcite		0.02388	1	0.3	1/1/2021	12.5	0.5										
+AB12-6A	Calcite	0.20324	0.09875	1	0.3	1/1/2021	12.5	0.5										
+AB12-6B	Calcite	0.21084	0.08489	1	0.3	1/1/2021	12.5	0.5										
+AB12-6C	Calcite	0.20265	0.07555	1	0.3	1/1/2021	12.5	0.5										
+AB12-6D	Calcite	0.21228	0.08191	1	0.3	1/1/2021	12.5	0.5										
+AB12-6E	Calcite	0.20121	0.07997	6	0.3	1/1/2021	12.5	0.5										
+AB12-6F	Calcite	0.19899	0.07739	7	0.3	1/1/2021	12.5	0.5										
+AB12-6G	Calcite	0.19852	0.08894	12	0.3	1/1/2021	12.5	0.5										
+AB12-6H	Calcite	0.22197	0.08471	12	0.3	1/1/2021	12.5	0.5										
+AB10-bottom	Calcite	0.09834	0.07645	6	0.3	1/1/2021	12.5	0.5										
+																		
+ANALYSIS NUMBERS AND DATE OF ANALYSIS																		
+Sample Name	U samp #	Date	Th samp #	Date	U samp tail #	Date	U std1 #	Date	U std1 tail #	Date	U std2 #	Date	U std2 tail #	Date	Th std1 #	Date	Th std2 #	Date
+Procedural blank	3418	Analysed on 27 January 2023 at 10:24	3499	Analysed on 30 January 2023 at 10:58	3422	Analysed on 27 January 2023 at 10:35	3415	Analysed on 27 January 2023 at 10:14	3416	Analysed on 27 January 2023 at 10:15	3421	Analysed on 27 January 2023 at 10:33	3422	Analysed on 27 January 2023 at 10:35	3497	Analysed on 30 January 2023 at 10:47	3501	Analysed on 30 January 2023 at 11:09
+AB12-6A	3424	Analysed on 27 January 2023 at 10:43	3503	Analysed on 30 January 2023 at 11:20	3428	Analysed on 27 January 2023 at 10:55	3421	Analysed on 27 January 2023 at 10:33	3422	Analysed on 27 January 2023 at 10:35	3427	Analysed on 27 January 2023 at 10:54	3428	Analysed on 27 January 2023 at 10:55	3501	Analysed on 30 January 2023 at 11:09	3505	Analysed on 30 January 2023 at 11:31
+AB12-6B	3430	Analysed on 27 January 2023 at 11:04	3507	Analysed on 30 January 2023 at 11:42	3434	Analysed on 27 January 2023 at 11:16	3427	Analysed on 27 January 2023 at 10:54	3428	Analysed on 27 January 2023 at 10:55	3433	Analysed on 27 January 2023 at 11:15	3434	Analysed on 27 January 2023 at 11:16	3505	Analysed on 30 January 2023 at 11:31	3509	Analysed on 30 January 2023 at 11:54
+AB12-6C	3436	Analysed on 27 January 2023 at 11:24	3511	Analysed on 30 January 2023 at 12:04	3440	Analysed on 27 January 2023 at 11:34	3433	Analysed on 27 January 2023 at 11:15	3434	Analysed on 27 January 2023 at 11:16	3439	Analysed on 27 January 2023 at 11:33	3440	Analysed on 27 January 2023 at 11:34	3509	Analysed on 30 January 2023 at 11:54	3513	Analysed on 30 January 2023 at 12:16
+AB12-6D	3442	Analysed on 27 January 2023 at 11:43	3515	Analysed on 30 January 2023 at 12:26	3446	Analysed on 27 January 2023 at 11:55	3439	Analysed on 27 January 2023 at 11:33	3440	Analysed on 27 January 2023 at 11:34	3445	Analysed on 27 January 2023 at 11:54	3446	Analysed on 27 January 2023 at 11:55	3513	Analysed on 30 January 2023 at 12:16	3517	Analysed on 30 January 2023 at 12:38
+AB12-6E	3453	Analysed on 27 January 2023 at 12:54	3519	Analysed on 30 January 2023 at 12:48	3457	Analysed on 27 January 2023 at 13:06	3445	Analysed on 27 January 2023 at 11:54	3446	Analysed on 27 January 2023 at 11:55	3456	Analysed on 27 January 2023 at 13:05	3457	Analysed on 27 January 2023 at 13:06	3517	Analysed on 30 January 2023 at 12:38	3521	Analysed on 30 January 2023 at 13:00
+AB12-6F	3461	Analysed on 27 January 2023 at 13:26	3523	Analysed on 30 January 2023 at 13:10	3465	Analysed on 27 January 2023 at 13:38	3456	Analysed on 27 January 2023 at 13:05	3457	Analysed on 27 January 2023 at 13:06	3464	Analysed on 27 January 2023 at 13:37	3465	Analysed on 27 January 2023 at 13:38	3521	Analysed on 30 January 2023 at 13:00	3525	Analysed on 30 January 2023 at 13:22
+AB12-6G	3471	Analysed on 27 January 2023 at 14:08	3527	Analysed on 30 January 2023 at 13:32	3475	Analysed on 27 January 2023 at 14:20	3464	Analysed on 27 January 2023 at 13:37	3465	Analysed on 27 January 2023 at 13:38	3474	Analysed on 27 January 2023 at 14:19	3475	Analysed on 27 January 2023 at 14:20	3525	Analysed on 30 January 2023 at 13:22	3529	Analysed on 30 January 2023 at 13:44
+AB12-6H	3479	Analysed on 27 January 2023 at 14:42	3531	Analysed on 30 January 2023 at 13:55	3483	Analysed on 27 January 2023 at 14:54	3474	Analysed on 27 January 2023 at 14:19	3475	Analysed on 27 January 2023 at 14:20	3482	Analysed on 27 January 2023 at 14:53	3483	Analysed on 27 January 2023 at 14:54	3529	Analysed on 30 January 2023 at 13:44	3533	Analysed on 30 January 2023 at 14:06
+																		
+"SAMPLE RAW INTENSITIES, IMPACT OF BLANK CORRECTION, STANDARD FLAGS, AND PERCENT YIELD"																		
+	Raw Intensity	Raw Intensity	Raw Intensity	Raw Intensity	Raw Intensity	Raw Intensity	Blk Corr (%)	Blk Corr (%)	Blk Corr (%)	Blk Corr (%)	Flag	Flag	Flag	Flag	Flag	Flag	Yield	Yield
+Sample Name	U238 (V)	U236 (mV)	Th230 (cps)	Th229 (mV)	Th230bg (V)	234tail/234 (per mil)	238/236	238/234	230/229	232/229	Th mass bias	U mass bias	Th IC yield	U IC yield	Th low spike	U low spike	U236 (%)	Th229 (%)
+Procedural blank	0.00112	0.00417	8.654372	0.001124001	0.5667346	13.57977435									1.124	4.17	26.79	42.7
+AB12-6A	0.579	0.965	2545.952	2.906952	0.4737409	58.47461995	0.01	3.94	0.14	0.03					2.907	0.965	1.58	26.96
+AB12-6B	8.44	10.5	3892.969	3.341673	0.4667226	4.224632292	0.01	3.28	0.12	0.03	0.6268				3.3417	10.5	20.24	36.45
+AB12-6C	7.11	7.86	8585.592	3.753776	1.438769	4.639407331	0.01	3.27	0.07	0.03		0.5263		3.1125	3.7538	7.86	16.79	46.2
+AB12-6D	11.6	14.9	8172.451	4.113573	0.4833913	2.657859209	0.01	3.47	0.07	0.06				3.2987	4.1136	14.9	28.96	46.46
+AB12-6E	34.8	2.43	119758.1	2.303714	0.7167528	0.986256221	0	0.2	0	0.06	0.7193			2.9623	2.3037	2.43	28.75	26.65
+AB12-6F	19.4	1.8	138989	3.546004	0.7167528	1.788455291	0	0.27	0	0.03					3.546	1.8	25.4	41.8
+AB12-6G	24	1.18	326098.9	3.937576	0.9123901	1.472783867	0	0.13	0	0.01	1.0067				3.9376	1.18	24.57	39.9
+AB12-6H	33.4	1.58	367605.5	4.329024	0.9667828	1.265072223	0	0.13	0	0.01					4.329	1.58	32.65	45.52
+AB10-bottom	41.7	3	31283.12	3.594822	1.316825	0.811130337	0	0.22	0.02	0.04	0.9673				3.5948	3	33.45	41.32
+																		
+PROCEDURAL BLANK MASSES																		
+230Th (fg)	232Th (pg)	234U (fg)	238U (pg)															
+0.178876211	0.311283721	-77.02528285	3.803300226															
+																		
+FINAL SAMPLE CONCENTRATIONS AND AGES																		
+Sample Name	238U	±(2sig)	232Th	±(2sig)	d234U	±(2sig)	(230Th/238U)	±(2sig)	230Th/232Th	±(2sig)	Age (uncorr)	±(2sig)	Age (corr)	±(2sig)	d234init	±(2sig)	Age (corr)	±(2sig)
+	ng/g		pg/g		per mille		activity		ppm atomic		yr		yr		per mille		yr BP	
+AB12-6A	181.007521	4.000087394	4759.511501	95.8636694	-13.61973103	25.66839434	0.227371711	0.003748711	137.2930501	0.694407361	28590.83712	1037.616308	27781.35008	954.2652261	-14.73050044	27.76183171	27710.35008	1037.616308
+AB12-6B	199.0245756	3.988387264	5718.225934	115.638624	39.44277684	17.13607917	0.228050646	0.001130082	126.0243848	0.654683333	26965.78647	543.3788219	26129.76314	658.2091491	42.46119957	18.4476143	26058.76314	658.2091491
+AB12-6C	207.9516576	4.197973566	4978.416187	99.89380377	36.48201331	17.08996363	0.398498776	0.002073583	264.2871592	1.066291301	52745.27964	1243.668222	52048.96663	1230.290692	42.25423936	19.7945019	51977.96663	1243.668222
+AB12-6D	185.6336288	3.71752411	2584.760834	51.83745411	44.00604622	18.12338898	0.401188641	0.001621742	457.470193	1.635727945	52677.50289	1281.777406	52276.42595	1260.560154	51.00146093	21.00515582	52205.42595	1281.777406
+AB12-6E	3511.002996	350.34177	2590.609944	52.43340435	5.361878065	1.658453274	0.573489578	0.004304382	12340.49517	46.66398439	92046.48869	1116.618067	92024.34312	267.2197399	6.951883064	2.150255446	91953.34312	1116.618067
+AB12-6F	2595.823183	219.2803455	5281.235245	106.4187889	7.061466603	2.150876008	0.572452114	0.004728005	4467.418532	15.06904804	91513.98318	1231.135673	91453.04205	343.6129193	9.14071661	2.784215921	91382.04205	1231.135673
+AB12-6G	5657.937594	1539.72254	14103.57374	285.9307406	6.377431285	1.737803037	0.628141857	0.008691669	4000.963579	17.28256519	106552.0861	2522.072278	106477.3766	356.2556903	8.612813191	2.346944119	106406.3766	2522.072278
+AB12-6H	4983.063235	1451.836169	15777.31579	317.5501973	2.54240108	1.523711039	0.633558996	0.008934855	3177.080552	8.423423973	108928.0797	2656.842357	108832.6884	327.5141079	3.456447676	2.07151963	108761.6884	2656.842357
+AB10-bottom	6674.893397	544.2156532	8005.126057	162.1469192	8.393867834	1.758900823	0.098579765	0.000640903	1305.094087	5.146657717	11216.33603	79.59293554	11180.40002	27.53317507	8.662931584	1.815282161	11109.40002	79.59293554
