@@ -10,9 +10,10 @@
 % ----------------------------------------------------------------------- %
 % AUTHORS: Christine Y Chen [CYC], David McGee [DM]
 % Created:      06/09/15
-% Last updated: 06/09/15
+% Last updated: 2/15/24
 %% ---------------------- REVISION HISTORY ------------------------------ %
 %
+% 02/15/24    [BHT]     Updated spike constants 
 % 06/09/15    [CYC]     Created by CYC. Based on Excel reduction sheet from
 %                       Dec 2014.
 %
@@ -21,20 +22,20 @@
 
 constants.spk.arag.U238_U233   = 0.000284180083703407;
 constants.spk.arag.U235_U233   = 0.0000436564125150588;
-constants.spk.arag.U234_U233   = 0.000346078761686624;
+constants.spk.arag.U234_U233   = 0.000357;
 constants.spk.arag.Th232_Th229 = 0.0035688899585085;
 constants.spk.arag.Th230_Th229 = 0.0000568907919271831;
-constants.spk.arag.Th229       = 0.44434;
-constants.spk.arag.U233        = 8.25560374325385;
+constants.spk.arag.Th229       = 0.372470996654462;
+constants.spk.arag.U233        = 6.921675;
 constants.spk.arag.U236_U233   = 0.981296488921163;
 
 constants.spk.calc.U238_U233   = 0.000175450777882931;
 constants.spk.calc.U235_U233   = 0.0000430555690434635;
-constants.spk.calc.U234_U233   = constants.spk.arag.U234_U233;
+constants.spk.calc.U234_U233   = 0.00036;
 constants.spk.calc.Th232_Th229 = 0.00119508371329823;
 constants.spk.calc.Th230_Th229 = 0.0000538350424096104;
-constants.spk.calc.Th229       = 0.34846;
-constants.spk.calc.U233        = 2.572262028;
+constants.spk.calc.Th229       = 0.329206684955765;
+constants.spk.calc.U233        = 2.422859592;
 constants.spk.calc.U236_U233   = 0.981296488921163;
 
 %% --------------------- Read in decay constants and masses ------------- %
