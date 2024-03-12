@@ -34,7 +34,7 @@
 % ----------------------------------------------------------------------- %
 % AUTHORS: Christine Y Chen [CYC], David McGee [DM], Ben Hardt [BH]
 % Created:      04/30/15
-% Last updated: 09/09/15
+% Last updated: 02/15/24
 %
 %% ---------------------- REVISION HISTORY ------------------------------ %
 % 02/15/24   [BHT]     Removed signifiant figures output. Updated units
@@ -53,7 +53,7 @@
 %
 %% --------------------------------------------------------------------- %%
 function MIT_MasterUThDataReduction(filename_sample_info)
-versionNum = '1.1.090915';
+versionNum = '1.1.021524';
 
 fprintf('----------------- BEGIN U-TH DATA REDUCTION ----------------- \n')
 

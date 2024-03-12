@@ -567,7 +567,7 @@ for i = 1:numSamp
     % U standard 1 tail
     index1 = find(allUtail_analyNum == std1_U_tail_num(i));
     if isempty(index1)
-        error('Error. Cannot find data for U standard tail #1 in text file, based on analysis number.')
+        error('Error. Cannot find data for U standard #1 in text file, based on analysis number.')
     end
     Ustd1_tail_data(i, :)  = allUtail_data(index1, :);
     Ustd1_tail_datetime(i) = allUtail_date(index1);   % Find analysis date
@@ -577,7 +577,7 @@ for i = 1:numSamp
     % U standard 2 tail 
     index2 = find(allUtail_analyNum == std2_U_tail_num(i));
     if isempty(index2)
-        error('Error. Cannot find data for U standard tail #2 in text file, based on analysis number.')
+        error('Error. Cannot find data for U standard #2 in text file, based on analysis number.')
     end
     Ustd2_tail_data(i, :) = allUtail_data(index2, :);
     Ustd2_tail_datetime(i) = allUtail_date(index2);   % Find analysis date
