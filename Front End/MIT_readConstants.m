@@ -61,7 +61,14 @@ constants.std.CRM112a.U238_U235_mean = 137.829;
 constants.std.CRM112a.U238_U235_sig = 0.011;
 constants.std.IRMM.U236_U233_mean = 0.981296488921163;
 constants.std.IRMM.U236_U233_sig = 0.00015;
-constants.std.MITh_1.Th232_Th229_mean = 12.3976180730787;
-constants.std.MITh_1.Th232_Th229_sig = 0.00203328639774461;
-constants.std.MITh_1.Th230_Th229_mean = 0.0503780853190189;
-constants.std.MITh_1.Th230_Th229_sig = 4.39868269075332E-06;
+% constants below reflect MITTh_2:
+constants.std.MITh_1.Th232_Th229_mean = 13.4014932378284;
+constants.std.MITh_1.Th232_Th229_sig = 0.0023386571119731;
+constants.std.MITh_1.Th230_Th229_mean = 0.0496786484625721;
+constants.std.MITh_1.Th230_Th229_sig = 6.28281016620802E-06;
+
+% older constants for MITTh_1
+%constants.std.MITh_1.Th232_Th229_mean = 12.3976180730787;
+%constants.std.MITh_1.Th232_Th229_sig = 0.00203328639774461;
+%constants.std.MITh_1.Th230_Th229_mean = 0.0503780853190189;
+%constants.std.MITh_1.Th230_Th229_sig = 4.39868269075332E-06;

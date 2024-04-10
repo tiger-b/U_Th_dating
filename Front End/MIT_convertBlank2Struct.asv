@@ -156,8 +156,16 @@ blankU_r.Utail.U2345_err     = ((blank_Ustd1_tail_data(10)/blank_Ustd1_tail_data
 %blankU_r.Utail.U2335_cps     = blank_Usamp_tail_data(11);
 blankU_r.Utail.U2335_cps     = ((blank_Ustd1_tail_data(11)/blank_Ustd1_tail_data(1)) + (blank_Ustd2_tail_data(11)/blank_Ustd2_tail_data(1)))/2 * blank_Usamp_data(9);
 %blankU_r.Utail.U2335_err     = blank_Usamp_tail_data(12);
-blankU_r.Utail.U2335_err     = ((blank_Ustd1_tail_data(12)/blank_Ustd1_tail_data(11)) + (blank_Ustd2_tail_data(12)/blank_Ustd2_tail_data(11)))/2 * blankU_r.Utail.U2335_cps;
+blankU_r.Utail.U2335_err     = ((blank_Ustd1_tail_data(i, 12)/blank_Ustd1_tail_data(i, 11)) + (blank_Ustd2_tail_data(i, 12)/blank_Ustd2_tail_data(11)))/2 * sampleU.Utail.U2335_cps;
 
+    sampleU.Utail.U237_cps      = ((Ustd1_tail(i, 5)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 5)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
+    sampleU.Utail.U237_err      = ((Ustd1_tail(i, 6)/Ustd1_tail(i, 5)) + (Ustd2_tail(i, 6)/Ustd2_tail(i, 5)))/2 * sampleU.Utail.U237_cps;
+    sampleU.Utail.U2365_cps     = ((Ustd1_tail(i, 7)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 7)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
+    sampleU.Utail.U2365_err     = ((Ustd1_tail(i, 8)/Ustd1_tail(i, 7)) + (Ustd2_tail(i, 8)/Ustd2_tail(i, 7)))/2 * sampleU.Utail.U2365_cps;
+    sampleU.Utail.U2345_cps     = ((Ustd1_tail(i, 9)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 9)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
+    sampleU.Utail.U2345_err     = ((Ustd1_tail(i, 10)/Ustd1_tail(i, 9)) + (Ustd2_tail(i, 10)/Ustd2_tail(i, 9)))/2 * sampleU.Utail.U2345_cps;
+    sampleU.Utail.U2335_cps     = ((Ustd1_tail(i, 11)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 11)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
+    sampleU.Utail.U2335_err     = ((Ustd1_tail(i, 12)/Ustd1_tail(i, 11)) + (Ustd2_tail(i, 12)/Ustd2_tail(i, 11)))/2 * sampleU.Utail.U2335_cps;
 
 % ----------------- Read in Standard 2 U of the blank-------------------- %
 stdBlnkU2_r.U.U238_U236      = blank_Ustd2_data(1);

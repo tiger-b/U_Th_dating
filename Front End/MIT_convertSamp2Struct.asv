@@ -122,20 +122,6 @@ function [sampleTh, standardTh1, standardTh2, sampleU, standardU1, standardU2] .
     standardU1.Utail.U2335_cps    = Ustd1_tail(i, 11);
     standardU1.Utail.U2335_err    = Ustd1_tail(i, 12);
     
-    % ------------------ Standard 2 U tail ------------------------------ %
-    standardU2.Utail.U238_V       = Ustd2_tail(i, 1);
-    standardU2.Utail.U238_V_err   = Ustd2_tail(i, 2);
-    standardU2.Utail.U236_V       = Ustd2_tail(i, 3);
-    standardU2.Utail.U236_V_err   = Ustd2_tail(i, 4);
-    standardU2.Utail.U237_cps     = Ustd2_tail(i, 5);
-    standardU2.Utail.U237_err     = Ustd2_tail(i, 6);
-    standardU2.Utail.U2365_cps    = Ustd2_tail(i, 7);
-    standardU2.Utail.U2365_err    = Ustd2_tail(i, 8);
-    standardU2.Utail.U2345_cps    = Ustd2_tail(i, 9);
-    standardU2.Utail.U2345_err    = Ustd2_tail(i, 10);
-    standardU2.Utail.U2335_cps    = Ustd2_tail(i, 11);
-    standardU2.Utail.U2335_err    = Ustd2_tail(i, 12);
-
     % -------------------- Read in U data for sample -------------------- %
     sampleU.U.U238_U236      = Usamp(i,  1);
     sampleU.U.U238_U236_err  = Usamp(i,  2);
@@ -166,17 +152,12 @@ function [sampleTh, standardTh1, standardTh2, sampleU, standardU1, standardU2] .
     %sampleU.Utail.U237_err      = Usamp_tail(i,  6);
     sampleU.Utail.U237_err      = ((Ustd1_tail(i, 6)/Ustd1_tail(i, 5)) + (Ustd2_tail(i, 6)/Ustd2_tail(i, 5)))/2 * sampleU.Utail.U237_cps;
     %sampleU.Utail.U2365_cps     = Usamp_tail(i,  7);
-    sampleU.Utail.U2365_cps     = ((Ustd1_tail(i, 7)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 7)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
+    sampleU.Utail.U2365_cps     = ((Ustd1_tail(i, 5)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 5)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);;
     %sampleU.Utail.U2365_err     = Usamp_tail(i,  8);
-    sampleU.Utail.U2365_err     = ((Ustd1_tail(i, 8)/Ustd1_tail(i, 7)) + (Ustd2_tail(i, 8)/Ustd2_tail(i, 7)))/2 * sampleU.Utail.U2365_cps;
     %sampleU.Utail.U2345_cps     = Usamp_tail(i,  9);
-    sampleU.Utail.U2345_cps     = ((Ustd1_tail(i, 9)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 9)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
     %sampleU.Utail.U2345_err     = Usamp_tail(i, 10);
-    sampleU.Utail.U2345_err     = ((Ustd1_tail(i, 10)/Ustd1_tail(i, 9)) + (Ustd2_tail(i, 10)/Ustd2_tail(i, 9)))/2 * sampleU.Utail.U2345_cps;
     %sampleU.Utail.U2335_cps     = Usamp_tail(i, 11);
-    sampleU.Utail.U2335_cps     = ((Ustd1_tail(i, 11)/Ustd1_tail(i, 1)) + (Ustd2_tail(i, 11)/Ustd2_tail(i, 1)))/2 * Usamp(i,  9);
     %sampleU.Utail.U2335_err     = Usamp_tail(i, 12);
-    sampleU.Utail.U2335_err     = ((Ustd1_tail(i, 12)/Ustd1_tail(i, 11)) + (Ustd2_tail(i, 12)/Ustd2_tail(i, 11)))/2 * sampleU.Utail.U2335_cps;
     
     % ---------------- Standard 2 U ------------------------------------- %
     standardU2.U.U238_U236      = Ustd2(i,  1);
@@ -194,5 +175,17 @@ function [sampleTh, standardTh1, standardTh2, sampleU, standardU1, standardU2] .
     standardU2.U.U234_cps       = Ustd2(i, 13);
     standardU2.U.U234_cps_err   = Ustd2(i, 14);
     
-
+    % ------------------ Standard 1 U tail ------------------------------ %
+    standardU2.Utail.U238_V       = Ustd2_tail(i, 1);
+    standardU2.Utail.U238_V_err   = Ustd2_tail(i, 2);
+    standardU2.Utail.U236_V       = Ustd2_tail(i, 3);
+    standardU2.Utail.U236_V_err   = Ustd2_tail(i, 4);
+    standardU2.Utail.U237_cps     = Ustd2_tail(i, 5);
+    standardU2.Utail.U237_err     = Ustd2_tail(i, 6);
+    standardU2.Utail.U2365_cps    = Ustd2_tail(i, 7);
+    standardU2.Utail.U2365_err    = Ustd2_tail(i, 8);
+    standardU2.Utail.U2345_cps    = Ustd2_tail(i, 9);
+    standardU2.Utail.U2345_err    = Ustd2_tail(i, 10);
+    standardU2.Utail.U2335_cps    = Ustd2_tail(i, 11);
+    standardU2.Utail.U2335_err    = Ustd2_tail(i, 12);
 end
