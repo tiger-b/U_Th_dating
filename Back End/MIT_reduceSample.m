@@ -133,8 +133,15 @@ blankOrNot = 0;
 % Calculate masses for procedural blank
 blank_mass.Th230_fg = blank_spk.Th.Th230_Th229 * spk.Th229 * 230 * blank_r.spk_wt * 1000;
 blank_mass.Th232_pg = blank_spk.Th.Th232_Th229 * spk.Th229 * 232 * blank_r.spk_wt;
-blank_mass.U234_fg  = blank_spk.U.U234_U233    * spk.U233  * 234 * blank_r.spk_wt * 1000;
 blank_mass.U238_pg  = blank_spk.U.U238_U236    * spk.U233  * 238 * blank_r.spk_wt * spk.U236_U233;
+% conditional statement for U234 
+if blank_spk.U.U234_U233 * spk.U233 * 234 * blank_r.spk_wt * 1000 > blank_mass.U238_pg / 15
+    blank_mass.U234_fg = blank_spk.U.U234_U233 * spk.U233  * 234 * blank_r.spk_wt * 1000;
+else
+    blank_mass.U234_fg = blank_mass.U238_pg / 15;
+end
+
+
 
 % Apply blank correction to sample
 sampU_blnk.U238_U236          = sampU_spk.U238_U236*(1 - blank_mass.U238_pg /...
