@@ -17,6 +17,7 @@
 % Created:      04/30/15
 % Last updated: 09/16/15
 %% ---------------------- REVISION HISTORY ------------------------------ %
+% 06/02/25    [BHT]  Updated the 230Th corrected uncertainty calculation.
 % 09/16/15    [CYC]  Temporary editted the print statement to not be
 %                    specific about which sample was infinite in order for
 %                    Ben to test the script.  Will introduce the print
@@ -86,8 +87,11 @@ try
     agelo1=vpasolve((ar08-ar28*(ar02init+ar02unc)*exp(-lam230*t))-(1-exp(-lam230*t)+(d234/1000)*(lam230/(lam230-lam234))*(1-exp((lam234-lam230)*t))),t);
     agelo2=vpasolve((ar08-ar28*(ar02init)*exp(-lam230*t))-(1-exp(-lam230*t)+((d234+d234u)/1000)*(lam230/(lam230-lam234))*(1-exp((lam234-lam230)*t))),t);
     agehi2=vpasolve((ar08-ar28*(ar02init)*exp(-lam230*t))-(1-exp(-lam230*t)+((d234-d234u)/1000)*(lam230/(lam230-lam234))*(1-exp((lam234-lam230)*t))),t);
-    ageunchi=sqrt((agehi1-agecorr)^2+(agehi2-agecorr)^2);
-    ageunclo=sqrt((agelo1-agecorr)^2+(agelo2-agecorr)^2);
+    agehi3=vpasolve(((ar08+ar08u)-ar28*(ar02init)*exp(-lam230*t))-(1-exp(-lam230*t)+(d234/1000)*(lam230/(lam230-lam234))*(1-exp((lam234-lam230)*t))),t);
+    agelo3=vpasolve(((ar08-ar08u)-ar28*(ar02init)*exp(-lam230*t))-(1-exp(-lam230*t)+(d234/1000)*(lam230/(lam230-lam234))*(1-exp((lam234-lam230)*t))),t);
+
+    ageunchi=sqrt((agehi1-agecorr)^2+(agehi2-agecorr)^2+(agehi3-agecorr)^2);
+    ageunclo=sqrt((agelo1-agecorr)^2+(agelo2-agecorr)^2+(agelo3-agecorr)^2);
     agecorrunc=(ageunchi+ageunclo)/2;
     
     d234init=d234*exp(lam234*agecorr);
