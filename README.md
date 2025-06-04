@@ -5,7 +5,7 @@ Originally written by Christine Chen, Christopher Kinsley, Ben Hardt, and David 
 
 Instructions:
 1. Create a directory containing the "Back End" and "Front End" folders.
-2. In the same directory, fill out an input sheet with sample information (sample numbers, date of chemistry, etc.).If a run deviated from the normal sequence in any way, sample, standard, and tail numbers must all be input manually. Otherwise, only U and Th sample numbers are required input and the software will find the standard and tail numbers automatically. 
+2. In the same directory, fill out an input sheet with sample information (sample numbers, date of chemistry, etc.). If a run deviated from the normal sequence in any way, sample, standard, and tail numbers must all be input manually. Otherwise, only U and Th sample numbers are required input and the software will find the standard and tail numbers automatically. 
 3. In MATLAB, navigate to this directory and add it to your search path. 
 4. Run MIT_MasterUThDataReduction('sample_input.csv') to generate an output file in the same directory.
 
